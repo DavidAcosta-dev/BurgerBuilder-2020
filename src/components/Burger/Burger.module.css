@@ -1,0 +1,48 @@
+
+/* mobile layout */
+.Burger {
+    width: 100%;
+    margin: auto;
+    height: 250px;
+    overflow: auto;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 55px;
+    /* background-color: rgb(255 243 197 / 75%); */
+}
+
+.NoIngredients {
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    background-color: rgb(0 184 255 / 18%);
+    border-radius: 9px;
+}
+
+
+
+/* Portrait mode (tall but not wide at all): */
+@media (min-width: 500px) and (min-height: 400px) {
+    .Burger {
+        width: 350px;
+        height: 300px;
+    }
+}
+
+/* If screen is at least 500px wide and 401 high: */
+@media (min-width: 500px) and (min-height: 401px) {
+    .Burger {
+        width: 450px;
+        height: 400px;
+    }
+}
+
+ /* If our screen is at least 1000px wide and 700px high: */
+ @media (min-width: 1000px) and (min-height: 700px) {
+    .Burger {
+        width: 700px;
+        height: 600px;
+    }
+}
+
