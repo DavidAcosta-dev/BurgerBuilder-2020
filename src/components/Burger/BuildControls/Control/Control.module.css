@@ -12,6 +12,7 @@
     margin: 0 5px;
     width: 80px;
     border: 1px solid #aa6817;
+    border-radius: 3px;
     cursor: pointer;
     outline: none;
 }
