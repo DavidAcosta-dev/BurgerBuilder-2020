@@ -1,14 +1,14 @@
 import React from 'react';
 import classes from './Layout.module.css';
-import Toolbar from '../Navigation/Toolbar/Toolbar';
-import SideDrawer from '../Navigation/SideDrawer/SideDrawer';
+import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
+import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
 // import Aux from '../../HOC/Auxiliary';    (using a fragment instead)
 
 class Layout extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            showSideDrawer: true
+            showSideDrawer: false
         }
     }
 
@@ -16,9 +16,9 @@ class Layout extends React.Component{
         this.setState({showSideDrawer: false})
     }
 
-    openSideDrawer = () => {
+    toggleSideDrawer = () => {
         this.setState((prevState,props)=> {
-            return {showSideDrawer: true}
+            return {showSideDrawer: !prevState.showSideDrawer}
         })
     }
 
@@ -26,7 +26,7 @@ class Layout extends React.Component{
         
         return (
             <>
-                <Toolbar openSideDrawer={this.openSideDrawer} />
+                <Toolbar toggleSideDrawer={this.toggleSideDrawer} />
                 <SideDrawer 
                     closeSideDrawer={this.closeSideDrawerHandler} 
                     showSideDrawer={this.state.showSideDrawer} 
