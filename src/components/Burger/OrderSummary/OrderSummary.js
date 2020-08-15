@@ -3,7 +3,7 @@ import BUTTON from '../../UI/BUTTON/BUTTON';
 
 class OrderSummary extends React.Component {
     //this could be a functional component, doesn't have to be a class.
-    componentWillUpdate() {
+    componentWillUpdate() { 
         console.log("orderSummary will update")
     }
 
