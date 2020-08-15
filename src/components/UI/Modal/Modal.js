@@ -7,7 +7,7 @@ class Modal extends React.Component {
 
     //The wrapping element controls the updating of the wrapped element. This prevents OrderSummary from updating needlessly
     shouldComponentUpdate(nxtProps, nxtState) {
-        return nxtProps.show !== this.props.show
+        return nxtProps.show !== this.props.show || nxtProps.children !== this.props.children;
     } 
  
     componentWillUpdate() {
