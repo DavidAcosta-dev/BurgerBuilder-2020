@@ -1,4 +1,9 @@
 .BuildControls {
+    background-image: url('http://static.indigoimages.ca/2015/shop/red-paint-splatter.png'), url("https://live.staticflickr.com/4057/4568151958_dac6db4d3d_z.jpg");
+    background-size: contain, auto;
+    background-blend-mode: overlay, normal;
+    background-repeat: no-repeat, repeat;
+    background-position: top left, center;
     width: 100%;
     background-color: #cf8f2eb0 ;
     display: flex;
@@ -48,5 +53,23 @@
     }
     100% {
         transform: scale(1);
+    }
+}
+
+
+/* If screen is at least 500px wide and 401 high: */
+@media (min-width: 500px) and (min-height: 401px) {
+    .BuildControls {
+        background-size: 50%, auto;
+        background-position-x: left;
+    }
+}
+
+ /* If our screen is at least 1000px wide and 700px high: */
+ @media (min-width: 1000px) and (min-height: 700px) {
+    .BuildControls {
+        background-size: 50%, auto;
+        background-position-x: left;
+
     }
 }

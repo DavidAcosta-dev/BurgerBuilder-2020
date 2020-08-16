@@ -2,7 +2,7 @@ import React from 'react';
 import classes from './Modal.module.css';
 import Backdrop from '../Backdrop/Backdrop';
  
- 
+//props: closeModal[click listener], children[inner content], show[boolean],   
 class Modal extends React.Component {
 
     //The wrapping element controls the updating of the wrapped element. This prevents OrderSummary from updating needlessly

@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './BuildControls.module.css';
 import Control from './Control/Control';
-
+import Splatter from './Splatter/Splatter';
 //props: addIngredient()
 const controlsArray = [
     { label: 'Salad', name: 'salad'},
@@ -30,6 +30,8 @@ const buildControls = (props) => (
             />) 
         }
         <button className={classes.OrderButton} disabled={!props.purchasable} onClick={()=> props.purchasingMode()}>ORDER NOW</button>
+        
+        
     </div>
 )
 

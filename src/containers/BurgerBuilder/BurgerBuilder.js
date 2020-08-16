@@ -4,6 +4,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import withErrorHandler from '../../HOC/withErrorHandler/withErrorHandler';
 import axios from '../../axios-orders';
 
 // *********NOTE*******: Refactor the state to be an array of ingredient Objects with their own name, quantity, and price keys.
@@ -19,17 +20,23 @@ class BurgerBuilder extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            ingredients: {
-                cheese: 0,
-                salad: 0,
-                bacon: 0,
-                meat: 0
-            },
+            ingredients: null, //this will be populated by the server when we fetch ingredients in componentDidMount();
             totalPrice: 4,
             purchasable: false,
             purchasingMode: false,
             loading: false
         }
+    }
+
+    componentDidMount() {
+        axios.get(`https://react-my-burger-3f060.firebaseio.com/ingredients.json`)
+            .then(res => {
+                const ingredients = res.data;
+                this.setState({ingredients});
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     updatePurchasableState = (ingredientsClone) => {
@@ -131,12 +138,12 @@ class BurgerBuilder extends React.Component {
     }//end of purchaseContinueHandler()
 
     render() {
-        const disableInfo = {
-            ...this.state.ingredients
-        };
+        const disableInfo = {...this.state.ingredients};
+
         for(let key in disableInfo) {
             disableInfo[key] = disableInfo[key] <= 0
         }
+        
         let orderSummary = <OrderSummary 
                                 ingredients={{...this.state.ingredients}} 
                                 totalPrice={this.state.totalPrice}
@@ -147,14 +154,10 @@ class BurgerBuilder extends React.Component {
         if(this.state.loading) {
             orderSummary = <Spinner />;
         }
-        //the for loop above is saying, for every key in disabledInfo(which is an ingredients clone) make the property of each key equal true or false depending if they are <= zero or not. Check out the console log below.
-        console.log(disableInfo);
 
-        return(
+        //if ingredients does NOT equal "null", then render Burger and BuildControls, otherwise, render a <Spinner />
+        let burgerAndControls = this.state.ingredients ?
             <>
-                <Modal show={this.state.purchasingMode} closeModal={this.closeModalHandler}>
-                    {orderSummary}
-                </Modal>
                 <Burger ingredients={{...this.state.ingredients}} />
                 <BuildControls 
                     addIngredient={this.addIngredient} 
@@ -165,11 +168,24 @@ class BurgerBuilder extends React.Component {
                     purchasingMode={this.purchaseModeHandler}
                 />
             </>
+        : <Spinner />
+
+
+        //the for loop above is saying, for every key in disabledInfo(which is an ingredients clone) make the property of each key equal true or false depending if they are <= zero or not. Check out the console log below.
+        console.log(disableInfo);
+
+        return(
+            <>
+                <Modal show={this.state.purchasingMode} closeModal={this.closeModalHandler}>
+                    {orderSummary}
+                </Modal>
+                { burgerAndControls }
+            </>
         )
     }
 }
 
 
-export default BurgerBuilder;
+export default withErrorHandler(BurgerBuilder, axios);
 
 
