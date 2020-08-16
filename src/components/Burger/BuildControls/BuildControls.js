@@ -1,7 +1,8 @@
 import React from 'react';
 import classes from './BuildControls.module.css';
 import Control from './Control/Control';
-import Splatter from './Splatter/Splatter';
+
+
 //props: addIngredient()
 const controlsArray = [
     { label: 'Salad', name: 'salad'},
