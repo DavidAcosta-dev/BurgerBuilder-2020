@@ -1,7 +1,7 @@
 .Modal {
     position: fixed;
     z-index: 500;
-    background-image: url('https://lh3.googleusercontent.com/proxy/PO59vaiwzZ_T_KEM5EeuT03efowmbFPGbzFmIi1JFcddqtfVsB5g9C9yxc1vsvxhOPoQPcItuoh3pRiKsD9dGJQ3twq7FE4tjuWBD71T4OtQxNHQJ3LE_SKdENw');
+    background-image: url('../../../assets/images/whitepaperburgerbuilder.jpg');
     background-color: white;
     width: 70%;
     border: 1px solid #ccc;

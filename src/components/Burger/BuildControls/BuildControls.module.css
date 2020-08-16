@@ -1,5 +1,5 @@
 .BuildControls {
-    background-image: url('http://static.indigoimages.ca/2015/shop/red-paint-splatter.png'), url("https://live.staticflickr.com/4057/4568151958_dac6db4d3d_z.jpg");
+    background-image: url('../../../assets/images/red-paint-splatter.webp'), url("../../../assets/images/browncrumpledpaper.jpg");
     background-size: contain, auto;
     background-blend-mode: overlay, normal;
     background-repeat: no-repeat, repeat;
