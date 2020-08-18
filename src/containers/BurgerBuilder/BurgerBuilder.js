@@ -24,7 +24,8 @@ class BurgerBuilder extends React.Component {
             totalPrice: 4,
             purchasable: false,
             purchasingMode: false,
-            loading: false
+            loading: false,
+            error: false
         }
     }
 
@@ -36,6 +37,7 @@ class BurgerBuilder extends React.Component {
             })
             .catch(err => {
                 console.log(err);
+                this.setState({error: true})
             })
     }
 
@@ -143,36 +145,41 @@ class BurgerBuilder extends React.Component {
         for(let key in disableInfo) {
             disableInfo[key] = disableInfo[key] <= 0
         }
-        
-        let orderSummary = <OrderSummary 
+        //"disabledInfo"....the for loop above is saying, for every key in disabledInfo(which is an ingredients clone) make the property of each key equal true or false depending if they are <= zero or not. Check out the console log below.
+        console.log(disableInfo);
+
+        let orderSummary = null; //Same reason we conditionally render burgerAndControls below, we fetch ingredients from server so it starts off as null and since these components depend on ingredients to render correctly, we must not render them until ingredients are present.
+    
+        let burgerAndControls = this.state.error ? <p>Ingredients cannot be loaded!...</p> : <Spinner />;
+
+        //if ingredients does NOT equal "null", then render Burger and BuildControls, as well as OrderSummary otherwise, render a <Spinner />. Reason for this is because we fetch ingredients from firebase so it starts off as null.
+        if(this.state.ingredients) {
+            burgerAndControls = (
+                <>
+                    <Burger ingredients={{...this.state.ingredients}} />
+                    <BuildControls 
+                        addIngredient={this.addIngredient} 
+                        removeIngredient={this.removeIngredient} 
+                        disabled={disableInfo}   
+                        totalPrice={this.state.totalPrice} 
+                        purchasable={this.state.purchasable}
+                        purchasingMode={this.purchaseModeHandler}
+                    />
+            </>
+            );//end of burgerAndControls
+            
+            orderSummary = <OrderSummary 
                                 ingredients={{...this.state.ingredients}} 
                                 totalPrice={this.state.totalPrice}
                                 closeModal={this.closeModalHandler} 
                                 purchaseContinue={this.purchaseContinueHandler}
                             />
+        }//end of conditional rendering
 
+        //Check if loading is true, if so we replace orderSummary w/ a spinner.
         if(this.state.loading) {
             orderSummary = <Spinner />;
         }
-
-        //if ingredients does NOT equal "null", then render Burger and BuildControls, otherwise, render a <Spinner />
-        let burgerAndControls = this.state.ingredients ?
-            <>
-                <Burger ingredients={{...this.state.ingredients}} />
-                <BuildControls 
-                    addIngredient={this.addIngredient} 
-                    removeIngredient={this.removeIngredient} 
-                    disabled={disableInfo}   
-                    totalPrice={this.state.totalPrice} 
-                    purchasable={this.state.purchasable}
-                    purchasingMode={this.purchaseModeHandler}
-                />
-            </>
-        : <Spinner />
-
-
-        //the for loop above is saying, for every key in disabledInfo(which is an ingredients clone) make the property of each key equal true or false depending if they are <= zero or not. Check out the console log below.
-        console.log(disableInfo);
 
         return(
             <>
