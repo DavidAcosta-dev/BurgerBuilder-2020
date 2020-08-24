@@ -7,11 +7,16 @@ const INPUT = (props) => {
     //The props passed in will also be {...spread} into the <element {...props} /> via props.
 
     let inputElement = null;  
+    const inputClasses = [classes.InputElement];
+
+    if (props.shouldValidate && props.invalid && props.touched) {
+        inputClasses.push(classes.Invalid);
+    }
 
     switch (props.elementType) {
         case ('input'):
             inputElement = <input 
-                className={classes.InputElement} 
+                className={inputClasses.join(' ')} 
                 {...props.elementConfig} 
                 value={props.value} 
                 onChange={props.changed} />;
@@ -19,7 +24,7 @@ const INPUT = (props) => {
 
         case ('textarea'):
             inputElement = <textarea 
-                className={classes.InputElement} 
+                className={inputClasses.join(' ')} 
                 {...props.elementConfig} 
                 value={props.value} 
                 onChange={props.changed} />;
@@ -28,7 +33,7 @@ const INPUT = (props) => {
         case ('select'):
             inputElement = (
                 <select
-                    className={classes.InputElement}
+                    className={inputClasses.join(' ')}
                     value={props.value} 
                     onChange={props.changed} >
                                                                         {/* rendering <option> elements inside <select> dynamically */}
@@ -44,7 +49,7 @@ const INPUT = (props) => {
 
         default:
             inputElement = <input 
-                className={classes.InputElement} 
+                className={inputClasses.join(' ')} 
                 {...props.elementConfig} 
                 value={props.value} onChange={props.changed} />;
     }//end of switch
