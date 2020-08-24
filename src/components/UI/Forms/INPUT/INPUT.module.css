@@ -1,0 +1,29 @@
+.INPUT {
+    width: 100%; /* should take up entire row, (add box-sizing to precalculate for margin,border, etc.. */
+    padding: 10px; /* want some space between other input divs */
+    box-sizing: border-box; /* precalculate cumulative dimensions to account for margin,padding,border etc.. */
+}
+
+.Label {
+    font-weight: bold; /* thicker text to stand out */
+    display: block; /* label should take up it's own row */
+    margin-bottom: 8px; /* label will be above inputElement and needs a little extra space away from inputElement */
+}
+
+.InputElement {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 6px 10px;
+    outline: none; /* don't want any outline */
+    border: 1px solid #ccc; 
+    background-color: white;
+    font: inherit;
+    
+}
+
+/* Pseudo-Selector styling for the input that the user is focused on */
+.InputElement:focus {
+    outline: none;
+    background-color: #ccc;
+}

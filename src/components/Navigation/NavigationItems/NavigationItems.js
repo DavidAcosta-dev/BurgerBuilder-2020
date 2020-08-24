@@ -5,8 +5,8 @@ import NavItem from './NavItem/NavItem';
 //for boolean props, you can just pass in the name by itself without assignment. so "active" instead of active="active" or active={true}
 const navigationItems = (props) => (
     <ul className={classes.NavigationItems}>
-        <NavItem link="/" active>Burger Builder</NavItem>
-        <NavItem link="/">Checkout</NavItem>
+        <NavItem link="/" exact>Burger Builder</NavItem>
+        <NavItem link="/orders">Orders</NavItem>
     </ul>
 )
 

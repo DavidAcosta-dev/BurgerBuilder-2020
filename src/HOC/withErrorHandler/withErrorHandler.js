@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from '../../components/UI/Modal/Modal';
 
-const withErrrorHandler = (WrappedComponent, axios) => {
+const withErrorHandler = (WrappedComponent, axios) => {
     // "functional component returning a class component": This looks very strage but it's a functional wrapper component that we set it's arguments to the component we will wrap+axios for interceptors middleware.
     //We then return an anonymous class component because we need it's class "shell" to hold state and access certain lifecycle hooks. Then inside that anonymous class comonent we return the child comonent we passed into withErrorHandler as an argument.
     
@@ -51,4 +51,4 @@ const withErrrorHandler = (WrappedComponent, axios) => {
     }
 }
 
-export default withErrrorHandler;
+export default withErrorHandler;

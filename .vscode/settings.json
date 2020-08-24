@@ -1,5 +1,17 @@
 {
-    "editor.fontFamily": "'Terminus (TTF) for Windows', Consolas, 'Courier New', monospace",
-    "editor.fontSize": 17,
-    "editor.fontWeight":"100"
+    "editor.fontFamily": "'JetBrains Mono', 'Terminus (TTF) for Windows', Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": null,
+    // "editor.fontSize": 17,
+    // "editor.fontWeight": "100",
+    // "editor.fontLigatures": null
+    
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    }
+      
 } 
