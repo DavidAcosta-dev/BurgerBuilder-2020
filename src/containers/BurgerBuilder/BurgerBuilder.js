@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
@@ -6,23 +8,15 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../HOC/withErrorHandler/withErrorHandler';
 import axios from '../../axios-orders';
+import * as actionTypes from '../../store/actions';
 
-// *********NOTE*******: Refactor the state to be an array of ingredient Objects with their own name, quantity, and price keys.
 
-const INGREDIENT_PRICES = {
-    salad: 0.5,
-    cheese: 0.4,
-    meat: 1.3,
-    bacon: 0.7
-};
+
 
 class BurgerBuilder extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            ingredients: null, //this will be populated by the server when we fetch ingredients in componentDidMount();
-            totalPrice: 4,
-            purchasable: false,
             purchasingMode: false,
             loading: false,
             error: false
@@ -30,66 +24,27 @@ class BurgerBuilder extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.props);
-        axios.get(`https://react-my-burger-3f060.firebaseio.com/ingredients.json`)
-            .then(res => {
-                const ingredients = res.data;
-                this.setState({ingredients});
-            })
-            .catch(err => {
-                console.log(err);
-                this.setState({error: true})
-            })
+        // console.log(this.props);
+        // axios.get(`https://react-my-burger-3f060.firebaseio.com/ingredients.json`)
+        //     .then(res => {
+        //         const ingredients = res.data;
+        //         this.setState({ingredients});
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //         this.setState({error: true})
+        //     })
     }
 
     updatePurchasableState = (ingredientsClone) => {
-        console.log(Object.values(ingredientsClone));
         const ingQuantity = Object.values(ingredientsClone).reduce((a,b)=> {
             return a + b;
         })
-        console.log(ingQuantity);
-
-        this.setState({
-            purchasable: ingQuantity > 0
-        })
+        
+        return ingQuantity > 0;
+        
     }
 
-    //adds +1 to the value of the ingredient name passed in.
-    addIngredient = (name) => {
-        const updatedIngredients = {...this.state.ingredients}; //cloning state in immutable fashion
-        console.log(`We will update ${name} from ${updatedIngredients[name]} to (${updatedIngredients[name]} + 1)`); //1
-        updatedIngredients[name] = this.state.ingredients[name] + 1; //adding +1 to the specific element in cloned state object.
-        // const priceAddition = INGREDIENT_PRICES[name];
-        // const oldPrice = this.state.totalPrice;
-        const newPrice = this.state.totalPrice + INGREDIENT_PRICES[name];
-
-        this.setState({
-            ingredients: updatedIngredients,      //updating real state with altered clone-state
-            totalPrice: newPrice
-        });
-
-        this.updatePurchasableState(updatedIngredients);
-
-    }//end of addIngredient()
-
-
-    removeIngredient = (name) => {
-        console.log(name);
-        if(this.state.ingredients[name] <= 0){
-            console.log(`No more ${name} to remove.`);
-            return
-        }
-        const ingredientsClone = {...this.state.ingredients};
-        const newPrice = this.state.totalPrice - INGREDIENT_PRICES[name];
-        ingredientsClone[name] --;
-        console.log(ingredientsClone);
-        this.setState({
-            ingredients: ingredientsClone,
-            totalPrice: newPrice
-        });
-
-        this.updatePurchasableState(ingredientsClone);
-    }
 
     purchaseModeHandler = () => {
         this.setState({
@@ -104,53 +59,41 @@ class BurgerBuilder extends React.Component {
     }
 
     purchaseContinueHandler = () => {
-
-        // // console.log("continuing!!!! :D")
-        
-        const queryParams = [];
-        for(let i in this.state.ingredients) {
-            queryParams.push(`${encodeURIComponent(i)}=${encodeURIComponent(this.state.ingredients[i])}`);
-        }
-        queryParams.push(`price=${this.state.totalPrice}`);
-        const queryString = queryParams.join('&')
-        this.props.history.push({           //push a new page onto the "stack" of pages
-            pathname:'/checkout',
-            search: `?${queryString}`
-        });
-    }//end of purchaseContinueHandler()
+        this.props.history.push('/checkout');
+    }
 
     render() {
-        const disableInfo = {...this.state.ingredients};
+        const disableInfo = {...this.props.ings}; //state is passed in as props by the {connect} HOC
 
         for(let key in disableInfo) {
             disableInfo[key] = disableInfo[key] <= 0
         }
-        //"disabledInfo"....the for loop above is saying, for every key in disabledInfo(which is an ingredients clone) make the property of each key equal true or false depending if they are <= zero or not. Check out the console log below.
-        console.log(disableInfo);
+        //"disabledInfo"....the for-in loop above is saying, for every key in disabledInfo(which is an ingredients clone) make the property of each key equal true or false depending if they are <= zero or not. Check out the console log below.
+
 
         let orderSummary = null; //Same reason we conditionally render burgerAndControls below, we fetch ingredients from server so it starts off as null and since these components depend on ingredients to render correctly, we must not render them until ingredients are present.
     
         let burgerAndControls = this.state.error ? <p>Ingredients cannot be loaded!...</p> : <Spinner />;
 
         //if ingredients does NOT equal "null", then render Burger and BuildControls, as well as OrderSummary otherwise, render a <Spinner />. Reason for this is because we fetch ingredients from firebase so it starts off as null.
-        if(this.state.ingredients) {
+        if(this.props.ings) {
             burgerAndControls = (
                 <>
-                    <Burger ingredients={{...this.state.ingredients}} />
+                    <Burger ingredients={this.props.ings} />
                     <BuildControls 
-                        addIngredient={this.addIngredient} 
-                        removeIngredient={this.removeIngredient} 
+                        addIngredient={this.props.onIngredientAdded} 
+                        removeIngredient={this.props.onIngredientRemoved} 
                         disabled={disableInfo}   
-                        totalPrice={this.state.totalPrice} 
-                        purchasable={this.state.purchasable}
+                        totalPrice={this.props.price} 
+                        purchasable={this.updatePurchasableState(this.props.ings)}
                         purchasingMode={this.purchaseModeHandler}
                     />
             </>
             );//end of burgerAndControls
             
             orderSummary = <OrderSummary 
-                                ingredients={{...this.state.ingredients}} 
-                                totalPrice={this.state.totalPrice}
+                                ingredients={this.props.ings} 
+                                totalPrice={this.props.price}
                                 closeModal={this.closeModalHandler} 
                                 purchaseContinue={this.purchaseContinueHandler}
                             />
@@ -172,7 +115,31 @@ class BurgerBuilder extends React.Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients,
+        price: state.totalPrice
+    }
+}
 
-export default withErrorHandler(BurgerBuilder, axios);
+const mapDispatchToProps = dispatch => {
+    return {
+        onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingName}),
+        onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName})
+    }
+}
 
+
+export default connect(mapStateToProps, mapDispatchToProps)( withErrorHandler(BurgerBuilder, axios) );
+
+//How connect works: connect detects the store={store} that was passed in by the <Provider>.
+//It then accepts the mapping functions which are nothing special by themselves, but when passed 
+//into connect, connect sees that the mappingFunction accepts an arg (doesn't matter what you named it)
+//and it passes the store's -> reducer.js's -> state into that mappingFunction and from there the mappingFunction
+//we set up returns an object with our state's properties. We use abbreviated keys like ings so that when we use it 
+//in the code we know that it's the mapped version that we made in here. 
+//Connect then wraps the exported component (this component) and injects the props we just made into it. Kinda weird to think of
+//our state being passed in as props from a mapped object we made inside the component receiving it but state is usually passed in as 
+//props anyway a lot of the time. The injecting props into itself part is still strange though.
+//ALL OF THIS ALSO GOES FOR THE DISPATCH FUNCTIONS IN THE mapDispatchToProps 
 

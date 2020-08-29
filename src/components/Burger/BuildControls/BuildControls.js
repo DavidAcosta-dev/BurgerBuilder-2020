@@ -13,6 +13,7 @@ const controlsArray = [
 
 
 
+
 //Needed to access props for the callback props 
 // const controlComponentsArray = controlsArray.map(ctrl => {
 //     return <Control key={ctrl.label}  ingLabel={ctrl.label} addIngredient={props.addIngredient} />

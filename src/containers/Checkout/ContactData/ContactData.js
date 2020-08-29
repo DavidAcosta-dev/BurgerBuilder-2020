@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import classes from './ContactData.module.css';
 import INPUT from '../../../components/UI/Forms/INPUT/INPUT';
 import Button from '../../../components/UI/BUTTON/BUTTON';
@@ -100,7 +102,7 @@ class ContactData extends React.Component {
     orderHandler = (e) => {
         e.preventDefault();
         
-        if(Object.keys(this.props.ingredients).length === 0){
+        if(Object.keys(this.props.ings).length === 0){
             alert("Please add ingredients");
             return
         }
@@ -115,7 +117,7 @@ class ContactData extends React.Component {
         }
 
         const order = {
-            ingredients: this.props.ingredients,
+            ingredients: this.props.ings,
             price: this.props.price,
             orderData: formData
         }
@@ -227,4 +229,12 @@ class ContactData extends React.Component {
     }
 }
 
-export default ContactData;
+
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients,
+        price: state.price
+    }
+}
+
+export default connect(mapStateToProps)(ContactData);
