@@ -8,7 +8,7 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../HOC/withErrorHandler/withErrorHandler';
 import axios from '../../axios-orders';
-import * as actionTypes from '../../store/actions';
+import * as actions from '../../store/actions/index';
 
 
 
@@ -17,23 +17,13 @@ class BurgerBuilder extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            purchasingMode: false,
-            loading: false,
-            error: false
+            purchasingMode: false
         }
     }
 
     componentDidMount() {
-        // console.log(this.props);
-        // axios.get(`https://react-my-burger-3f060.firebaseio.com/ingredients.json`)
-        //     .then(res => {
-        //         const ingredients = res.data;
-        //         this.setState({ingredients});
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        //         this.setState({error: true})
-        //     })
+        console.log(this.props);     
+        this.props.onInitIngredients();
     }
 
     updatePurchasableState = (ingredientsClone) => {
@@ -59,6 +49,7 @@ class BurgerBuilder extends React.Component {
     }
 
     purchaseContinueHandler = () => {
+        this.props.onInitPurchase();
         this.props.history.push('/checkout');
     }
 
@@ -73,7 +64,7 @@ class BurgerBuilder extends React.Component {
 
         let orderSummary = null; //Same reason we conditionally render burgerAndControls below, we fetch ingredients from server so it starts off as null and since these components depend on ingredients to render correctly, we must not render them until ingredients are present.
     
-        let burgerAndControls = this.state.error ? <p>Ingredients cannot be loaded!...</p> : <Spinner />;
+        let burgerAndControls = this.props.error ? <p>Ingredients cannot be loaded!...</p> : <Spinner />;
 
         //if ingredients does NOT equal "null", then render Burger and BuildControls, as well as OrderSummary otherwise, render a <Spinner />. Reason for this is because we fetch ingredients from firebase so it starts off as null.
         if(this.props.ings) {
@@ -99,11 +90,6 @@ class BurgerBuilder extends React.Component {
                             />
         }//end of conditional rendering
 
-        //Check if loading is true, if so we replace orderSummary w/ a spinner.
-        if(this.state.loading) {
-            orderSummary = <Spinner />;
-        }
-
         return(
             <>
                 <Modal show={this.state.purchasingMode} closeModal={this.closeModalHandler}>
@@ -117,15 +103,18 @@ class BurgerBuilder extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice
+        ings: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.totalPrice,
+        error: state.burgerBuilder.error
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingName}),
-        onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName})
+        onIngredientAdded: (ingName) => dispatch(actions.addIngredient(ingName)),
+        onIngredientRemoved: (ingName) => dispatch(actions.removeIngredient(ingName)),
+        onInitIngredients: () => dispatch(actions.initIngredients()),
+        onInitPurchase: () => dispatch(actions.purchaseInit())
     }
 }
 
