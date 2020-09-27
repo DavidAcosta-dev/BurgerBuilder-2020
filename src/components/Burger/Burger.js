@@ -15,8 +15,6 @@ const burger = (props) => {
             return accu.concat(el)
         }, []);
 
-        console.log(ingredientsArray);
-
         if(ingredientsArray.length === 0) {
             ingredientsArray = <p className={classes.NoIngredients}>Please add ingredients</p>
         }

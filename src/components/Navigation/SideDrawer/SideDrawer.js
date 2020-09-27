@@ -11,12 +11,12 @@ const sideDrawer = (props) => {
     return(
         <>
             <Backdrop closeModal={props.closeSideDrawer} show={props.showSideDrawer} />
-            <div className={sideDrawerStyling.join(" ")}>
+            <div className={sideDrawerStyling.join(" ")} onClick={props.closeSideDrawer}>
                 <div className={classes.Logo}>
                     <Logo />
                 </div>
                 <nav>
-                    <NavigationItems />
+                    <NavigationItems isAuthenticated={props.isAuth} />
                 </nav>
             </div>
         </>

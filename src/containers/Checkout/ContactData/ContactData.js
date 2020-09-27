@@ -8,6 +8,7 @@ import Spinner from '../../../components/UI/Spinner/Spinner';
 import axios from '../../../axios-orders';
 import withErrorHandler from '../../../HOC/withErrorHandler/withErrorHandler';
 import * as actions from '../../../store/actions/index';
+import { updateObject, checkValidity } from '../../../shared/utility';
 
 class ContactData extends React.Component {
     constructor(props) {
@@ -99,9 +100,6 @@ class ContactData extends React.Component {
         }
     }
 
-    componentDidMount(){
-        console.log(this.props)
-    }
 
     orderHandler = (e) => {
         e.preventDefault();
@@ -119,50 +117,29 @@ class ContactData extends React.Component {
         const order = {
             ingredients: this.props.ings,
             price: this.props.price,
-            orderData: formData
+            orderData: formData,
+            userId: this.props.userId
         }
 
-        this.props.onOrderBurger(order);
+        this.props.onOrderBurger(order, this.props.token);
 
 
         
 
     }//END of orderHandler()
 
-
-    checkValidity = (value, rules) => {
-        let isValid = true;
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
-
-    }// END of checkValidity
-
-
     inputChangedHandler = (e, inputIdentifier) => {
-        //deep cloning
-        const orderFormClone = {
-            ...this.state.orderForm
-        };
-        const updatedInput = {
-            ...orderFormClone[inputIdentifier]
-        }
-        updatedInput.value = e.target.value;
-        updatedInput.valid = this.checkValidity(updatedInput.value, updatedInput.validation); //passing the updatedInput's value and validation key to the validation checker. This will return true or false and assign it to the "valid" key which sits on the input's state currently false by default.
-        updatedInput.touched = true;
-        orderFormClone[inputIdentifier] = updatedInput;
         
+        const updatedInput = updateObject(this.state.orderForm[inputIdentifier], {
+            value: e.target.value,
+            valid: checkValidity(e.target.value, this.state.orderForm[inputIdentifier].validation), //passing the updatedInput's value and validation key to the validation checker. This will return true or false and assign it to the "valid" key which sits on the input's state currently false by default.
+            touched: true
+        });
+
+        //deep cloning
+        const orderFormClone = updateObject(this.state.orderForm, {
+            [inputIdentifier]: updatedInput
+        })        
         
 
         let formIsValid = true;
@@ -224,13 +201,15 @@ const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
-        loading: state.order.loading
+        loading: state.order.loading,
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
+        onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
     };
 };
 
